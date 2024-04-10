@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <link rel="stylesheet" href="{% static 'teachermaincss.css' %}">
+</head>
+<body>
+    <div class="panel left-panel">
+    <div class="panel-header">Left Panel</div>
+    </div>
+
+    <div class="panel center-panel">
+        {% for room in rooms %}
+        <form action="{% url 'teacher_main' %}" method="post">
+        {% csrf_token %}
+        <div class="container">
+            <button type="submit" class = "btn" name="get_info" value={{room.code}}>{{ room.name }}</button>
+        </div>
+      </form>
+        {% endfor %}
+        <form action="{% url 'teacher_main' %}" method="post">
+        {% csrf_token %}
+        <div class="container2">
+            <input type="text" id="room_name" class="room_name" name="room_name" placeholder="Insert Room Name" autocomplete="off" required>
+            <button type="submit" class="add_room">+</button>
+        
+        </div>
+        </form>
+        <!-- <div class="container2">
+        <form action="/teacher_main/" method="post">
+          {% csrf_token %}
+          <button type="submit" name="delete_all_rooms">DELETE</button>
+        </div>
+        </form> -->
+    </div>
+
+    <div class="panel right-panel">
+        <div class="room-info" id="room-info">
+          <div id="room-info-name">{{ room.name }}</div>
+          <div id="room-info-code">Room code: {{ room.code }}</div>
+        </div>
+          <div class="students-info" id="students-info">
+            <table class="students-table">
+              <thead>
+                <tr>
+                  <th class="table-row">Email</th>
+                  <th class="table-row">Score</th>
+                  <th class="table-row">Subrooms</th>
+                </tr>
+              </thead>
+              <tbody id="students-info-body">
+                {% for student, details in students %}
+                  <tr>
+                    <td class="table-row">{{ student }}</td>
+                    <td class="table-row">{{ details.0 }}</td>
+                    <td class="table-row">{{ details.1 }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        <div class="sub-rooms-container">
+          <form action="/teacher_main/" method="post">
+            {% csrf_token %}
+            <input value="{{room.code}}" name="active-room-code" style="display:none;"></input>
+            <input type="text" placeholder="Subroom name:" name="subroom-name-input" class="subroom-name-input"></input>
+            <button type="submit" class="add-sub-room-btn" name="add-sub-room-btn">Add Subroom</button>
+          </form>
+            <div class="actual-subroom-container">
+              {% for subroomname, studentlistsubroom in subrooms %}
+              <div class="Subroom-Box">
+                <div class="subroom-info">
+                  <form action="/teacher_main/" method="post">
+                    {% csrf_token %}
+                    <input value="{{room.code}}" name="active-room-code" style="display:none;"></input>
+                    <button type="submit" name="delete-sub-room-button" class="delete-sub-room-button">-</button>
+                    <div class="subroom-title" name="subroom-title">{{subroomname}}</div>
+                    <input type="hidden" name="subroomname" value="{{subroomname}}">
+                  </form>
+                </div>
+                <div class="subroom-students-adding-container">
+                  <form action="/teacher_main/" method="post">
+                    {% csrf_token %}
+                    <input value="{{room.code}}" name="active-room-code" style="display:none;"></input>
+                    <input type="hidden" name="subroomname" value="{{subroomname}}">
+                    <input type="text" name="student-name-input" class="student-name-input" placeholder="Student name here"></input>
+                    <button type="submit" name="student-add-button" class="student-add-button">+</button>
+                  </form>
+                  <table class="student-names-table-subroom">
+                    <tbody>
+                      {% for subroomstudentname in studentlistsubroom %}
+                      <tr>
+                        <form action="/teacher_main/" method="post">
+                          {% csrf_token %}                  
+                          <input value="{{room.code}}" name="active-room-code" style="display:none;"></input>
+                          <input type="hidden" name="subroomname" value="{{subroomname}}">
+                          <input type="hidden" name="student_subroom_name" value="{{subroomstudentname}}"> 
+                          <td name="student-name-subroom" class="student-name-subroom">{{subroomstudentname}}</td>
+                          <td><button name="student-remove-button" type="submit" class="student-remove-button">-</button></td>
+                        </form>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
